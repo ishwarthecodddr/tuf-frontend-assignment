@@ -86,6 +86,30 @@ export function CalendarWall() {
     setMonthDate((prev) => new Date(prev.getFullYear(), prev.getMonth() + 1, 1));
   };
 
+  const monthFlipVariants = {
+    initial: (direction: 1 | -1) => ({
+      opacity: 0,
+      rotateX: direction > 0 ? -96 : 96,
+      rotateZ: direction > 0 ? -1.2 : 1.2,
+      y: direction > 0 ? -24 : 24,
+      filter: "blur(2px)",
+    }),
+    animate: {
+      opacity: 1,
+      rotateX: 0,
+      rotateZ: 0,
+      y: 0,
+      filter: "blur(0px)",
+    },
+    exit: (direction: 1 | -1) => ({
+      opacity: 0,
+      rotateX: direction > 0 ? 96 : -96,
+      rotateZ: direction > 0 ? 1.2 : -1.2,
+      y: direction > 0 ? 24 : -24,
+      filter: "blur(2px)",
+    }),
+  };
+
   return (
     <div
       className="mx-auto w-full max-w-[760px] px-4 py-4 sm:py-8"
@@ -102,8 +126,12 @@ export function CalendarWall() {
           initial={{ opacity: 0, y: 14 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.35, ease: "easeOut" }}
-          className="relative mx-auto w-full max-w-[390px] bg-transparent px-3 pb-3 pt-8 shadow-[0_25px_45px_rgba(0,0,0,0.22)] ring-1 ring-black/10 sm:max-w-[430px] sm:p x-4 sm:pb-4"
+          className="relative mx-auto w-full max-w-[390px] bg-transparent px-3 pb-3 pt-8 shadow-[0_44px_90px_rgba(0,0,0,0.42),0_16px_34px_rgba(0,0,0,0.28),0_4px_10px_rgba(0,0,0,0.2)] ring-1 ring-black/10 sm:max-w-[430px] sm:px-4 sm:pb-4"
         >
+          <div className="pointer-events-none absolute -bottom-7 left-5 right-5 h-10 rounded-full bg-black/30 blur-2xl" />
+          <div className="pointer-events-none absolute -left-6 top-24 h-28 w-28 rounded-full bg-black/15 blur-2xl" />
+          <div className="pointer-events-none absolute -right-6 top-40 h-32 w-24 rounded-full bg-black/12 blur-2xl" />
+
           <div className="absolute left-1/2 top-1 h-2.5 w-2.5 -translate-x-1/2 rounded-full border border-slate-500 bg-white" />
           <div className="mb-2 flex justify-center gap-1.5">
             {Array.from({ length: 24 }).map((_, index) => (
@@ -115,23 +143,24 @@ export function CalendarWall() {
             ))}
           </div>
 
-          <div className="perspective:[1400px]">
+          <div className="relative [perspective:1400px]">
             <AnimatePresence mode="wait" initial={false}>
               <motion.div
                 key={monthDate.toISOString()}
-                initial={{
-                  opacity: 0,
-                  rotateX: monthDirection > 0 ? -70 : 70,
-                  y: monthDirection > 0 ? -16 : 16,
+                custom={monthDirection}
+                variants={monthFlipVariants}
+                initial="initial"
+                animate="animate"
+                exit="exit"
+                transition={{
+                  duration: 0.62,
+                  ease: [0.2, 0.9, 0.2, 1],
                 }}
-                animate={{ opacity: 1, rotateX: 0, y: 0 }}
-                exit={{
-                  opacity: 0,
-                  rotateX: monthDirection > 0 ? 70 : -70,
-                  y: monthDirection > 0 ? 16 : -16,
+                style={{
+                  transformOrigin: "top center",
+                  transformStyle: "preserve-3d",
+                  backfaceVisibility: "hidden",
                 }}
-                transition={{ duration: 0.4, ease: [0.2, 0.8, 0.2, 1] }}
-                style={{ transformOrigin: "top center" }}
               >
                 <HeroImage
                   imageSrc={heroImage}
@@ -151,6 +180,21 @@ export function CalendarWall() {
                   onAddNote={addNote}
                   onDeleteNote={removeNote}
                   textOnAccent={palette.textOnAccent}
+                />
+
+                <motion.div
+                  aria-hidden
+                  className="pointer-events-none absolute inset-0"
+                  initial={{ opacity: 0.34 }}
+                  animate={{ opacity: 0 }}
+                  exit={{ opacity: 0.32 }}
+                  transition={{ duration: 0.55, ease: "easeOut" }}
+                  style={{
+                    background:
+                      monthDirection > 0
+                        ? "linear-gradient(to bottom, rgba(0,0,0,0.26) 0%, rgba(0,0,0,0.06) 22%, transparent 52%)"
+                        : "linear-gradient(to top, rgba(0,0,0,0.24) 0%, rgba(0,0,0,0.06) 22%, transparent 52%)",
+                  }}
                 />
               </motion.div>
             </AnimatePresence>

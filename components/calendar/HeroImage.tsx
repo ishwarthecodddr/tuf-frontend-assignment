@@ -37,18 +37,18 @@ export function HeroImage({
           onLoad={(event) => onImageLoad(event.currentTarget)}
         />
 
-        <div className="absolute bottom-0 w-full">
-          <div className="h-[110px] bg-white [clip-path:polygon(0_45%,100%_25%,100%_100%,0_100%)]" />
+        <div className="absolute bottom-0 h-[85px] w-full overflow-hidden">
+          {/* Right curved shape for text background */}
           <div
-            className="absolute bottom-0 h-[110px] w-full"
+            className="absolute bottom-0 right-0 w-[55%] min-w-[200px] h-[82px] transition-colors duration-500"
             style={{
-              background: "var(--accent)",
-              clipPath: "polygon(0 65%, 100% 35%, 100% 100%, 0 100%)",
+              backgroundColor: "var(--accent)",
+              borderTopLeftRadius: "80px",
             }}
           />
         </div>
 
-        <div className="absolute bottom-6 right-5 text-right">
+        <div className="absolute bottom-7 right-5 text-right">
           <p className="text-xs tracking-[0.2em]" style={{ color: "var(--text-on-accent)" }}>
             {year}
           </p>
